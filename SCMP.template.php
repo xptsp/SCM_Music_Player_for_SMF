@@ -34,9 +34,9 @@ function template_SCMP_playlist()
 				</div>';
 	echo '
 				<div class="content">
-					<ul style="float:left; width:100%;">';
+					<ul style="width:100%;">';
 
-	// List through every subforum, printing its name and link to modify the subforum, 
+	// List through every playlist, printing its name and link to modify the playlist:
 	$alternate = false;
 	$count = count($context['SCMP_playlists']);
 	foreach ($context['SCMP_playlists'] as $id => $playlist)
@@ -46,11 +46,11 @@ function template_SCMP_playlist()
 						<li class="windowbg', $alternate ? '' : '2', '" style="padding-', ($context['right_to_left'] ? 'right' : 'left'), ': 5px;">
 							<span class="floatleft">' . ($count > 1 ? '<input type="radio" name="SCM_selected_playlist" value="' . $id . '"' . ($modSettings['SCM_selected_playlist'] == $id ? ' checked="checked"' : '') . ' />' : ''), $playlist['name'], '</span>
 							<span class="floatright">';
-		if ($id != 0)
+		if ($id > 0)
 			echo '
-								<span class="modify_boards"><a href="', $scripturl, '?action=admin;area=scm_media_player;sa=playlists;remove=', $id, '"', ($smf21 ? ' class="button"' : ''), '>', $txt['SCMP_remove'], '</a></span>';
+								<span class="modify_boards"><a href="', $scripturl, '?action=admin;area=scm_media_player;sa=remove;list=', $id, '"', ($smf21 ? ' class="button"' : ''), '>', $txt['SCMP_remove'], '</a></span>';
 		echo '
-								<span class="modify_boards"><a href="', $scripturl, '?action=admin;area=scm_media_player;sa=playlists;edit=', $id, '"', ($smf21 ? ' class="button"' : ''), '>', $txt['mboards_modify'], '</a></span>
+								<span class="modify_boards"><a href="', $scripturl, '?action=admin;area=scm_media_player;sa=edit;list=', $id, '"', ($smf21 ? ' class="button"' : ''), '>', $txt['mboards_modify'], '</a></span>
 							</span>
 							<br style="clear: right;" />
 						</li>';
@@ -60,8 +60,7 @@ function template_SCMP_playlist()
 	echo '
 					</ul>
 					<div class="righttext">', ($count > 1 ? '
-						<input type="submit" name="new_selection" value="' . $txt['save'] . '" class="button_submit" />' : ''), '
-						<input type="submit" name="new_playlist" value="', $txt['SCM_new_playlist'], '" class="button_submit" />
+						<input type="submit" name="save" value="' . $txt['save'] . '" class="button_submit" />' : ''), '
 						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 					</div>
 				</div>
@@ -71,7 +70,7 @@ function template_SCMP_playlist()
 	</div>';
 }
 
-function template_callback_SCM_playlists()
+function template_callback_SCM_songs()
 {
 	global $context, $txt, $modSettings, $boardurl;
 
@@ -89,10 +88,10 @@ function template_callback_SCM_playlists()
 		$counter++;
 		echo '
 				<dt id="title_', $counter, '">
-					', $counter, ') <input type="text" name="SCM_title[]" value=', JavaScriptEscape($title), ' size="25" class="input_text" />
+					', $counter, ') <input type="text" name="SCM_title[]" value=', $title, ' size="25" class="input_text" />
 				</dt>
 				<dd id="url_', $counter, '">
-					<input type="text" name="SCM_url[]" value=', JavaScriptEscape($url), ' size="40" class="input_text" />
+					<input type="text" name="SCM_url[]" value="', $url, '" size="40" class="input_text" />
 					<a href="javascript:void(0);" onclick="removeTrack(', $counter .'); return false;"><img src="', $boardurl, '/Themes/default/images/icons/quick_remove.gif"></a>
 				</dd>';
 	}
@@ -125,21 +124,15 @@ function template_callback_SCM_style()
 	foreach ($context['SCM_styles'] as $style)
 		echo '
 							<tr>
-								<td><input type="radio" name="SCM_style"', ($modSettings['SCM_style'] == $style ? ' checked="checked"' : ''), ' value="', $style, (!empty($modSettings['SCM_enabled']) ? '" onclick="SCM.skin(\'skins/' . $style . '/skin.css\');" ' : '"'), '/>', $style, '</td>
+								<td><input type="radio" name="SCM_style"', (isset($modSettings['SCM_style']) && $modSettings['SCM_style'] == $style ? ' checked="checked"' : ''), ' value="', $style, (!empty($modSettings['SCM_enabled']) ? '" onclick="SCM.skin(\'skins/' . $style . '/skin.css\');" ' : '"'), '/>', $style, '</td>
 								<td><iframe src="http://scmplayer.net/skinPreview.html#skins/', $style, '/skin.css" frameborder="0" width="400" height="25" style="padding: 1px;"></iframe></option></td>
 							</tr>';
 	echo '
 							<tr>
-								<td><input type="radio" name="SCM_style"', ($modSettings['SCM_style'] == '_custom_' ? ' checked="checked"' : ''), ' value="_custom_" />', $txt['SCM_custom_style'], '</td>
+								<td><input type="radio" name="SCM_style"', (isset($modSettings['SCM_style']) && $modSettings['SCM_style'] == '_custom_' ? ' checked="checked"' : ''), ' value="_custom_" />', $txt['SCM_custom_style'], '</td>
 								<td><input type="text" name="SCM_custom_url" size="50"', (isset($modSettings['SCM_custom_url']) && $modSettings['SCM_style'] == '_custom_' ? 'value="' . $modSettings['SCM_custom_url'] . '"' : ''), ' /></td>
 							</tr>
 						</table>';
-}
-
-function template_SCMP_popup_trigger()
-{
-	global $boardurl, $txt;
-	echo ' <a class="button" href="#SCMP_popup"><img src="', $boardurl, '/Themes/default/images/helptopics.gif" class="icon" alt="', $txt['SCMP_popup_title'], '"></a>';
 }
 
 ?>

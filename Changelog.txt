@@ -1,3 +1,11 @@
+v2.2 - March 24th, 2018
+o Fixed inability to add new playlists.
+o Fixed code that saves playlists to the database.
+o Fixed undefined variable error in [b]SCMP.template.php[/b].
+o Removed references to missing CSS file.
+o Moved playlist buidling code from [b]Subs-SCMP_Admin.php[/b] to [b]Subs-SCMP.php[/b].
+o Added code in order to cache the building of the playlists.
+
 v2.1 - March 15th, 2018
 o Fixed issue involving selecting playlists other than number 0 (the default).
 

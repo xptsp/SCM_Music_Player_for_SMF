@@ -14,17 +14,18 @@ if (!defined('SMF'))
 /*******************************************************************************/
 function SCM_Admin(&$areas)
 {
-	global $txt;
+	global $txt, $context;
 	loadLanguage('SCMP');
+	$tmp = $context['SCMP_decision'] = isset($_REQUEST['area']) && $_REQUEST['area'] == 'scm_media_player' && isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'edit';
 	$areas['config']['areas']['scm_media_player'] = array(
 		'label' => $txt['SCM_area'],
-		'function' => 'SCM_Modify',
+		'function' => 'SCM_Config',
 		'icon' => 'modifications.gif',
 		'subsections' => array(
 			'settings' => array($txt['language_settings']),
 			'skins' => array($txt['SCM_skins']),
 			'playlists' => array($txt['SCM_playlists']),
-			'new' => array($txt['SCM_new_playlist']),
+			($tmp ? 'edit' : 'new') => array($txt[$tmp ? 'SCM_edit_playlist' : 'SCM_new_playlist']),
 		),
 	);
 }
@@ -35,11 +36,11 @@ function SCM_Permissions(&$permissionGroups, &$permissionList, &$leftPermissionG
 }
 
 /*******************************************************************************/
-// Functions required for mod configuration:
+// Function required for mod configuration:
 /*******************************************************************************/
-function SCM_Modify()
+function SCM_Config()
 {
-	global $context, $settings, $txt, $sourcedir;
+	global $context, $settings, $txt, $sourcedir, $modSettings;
 
 	// Create the tabs for the template .
 	$context[$context['admin_menu_name']]['tab_data'] = array(
@@ -52,17 +53,22 @@ function SCM_Modify()
 			),
 			'playlists' => array(
 			),
+			'edit' => array(
+			),
 			'new' => array(
 			),
 		),
 	);
+	unset($context[$context['admin_menu_name']]['tab_data']['tabs'][$context['SCMP_decision'] ? 'new' : 'edit']);
 
 	// Format: 'sub-action' => 'function'
 	$subActions = array(
 		'playlists' => 'SCMP_Lists',
 		'skins' => 'SCMP_Skins',
 		'settings' => 'SCMP_Settings',
-		'new' => 'SCMP_Lists',
+		'new' => 'SCMP_Edit',
+		'edit' => 'SCMP_Edit',
+		'remove' => 'SCMP_Remove',
 	);
 
 	// Figure out what we are loading for the user:
@@ -148,11 +154,10 @@ function SCMP_Skins()
 		$list[$style] = $style;
 	$context['SCM_styles'] = $list;
 
+	// Use the show_settings template with our callback function:
 	$config_vars = array(
 		array('callback', 'SCM_style'),
 	);
-	if ($return_config)
-		return $config_vars;
 
 	// Saving?
 	if (isset($_GET['save']))
@@ -187,49 +192,6 @@ function SCMP_Lists()
 {
 	global $modSettings, $context, $txt, $scripturl;
 
-	// Define the template stuff we need:
-	loadLanguage('ManageBoards');
-	$context['page_title' ] = $txt['SCM_playlists'];
-	$context['sub_template'] = 'SCMP_playlist';
-	$context['post_url'] = $scripturl . '?action=admin;area=scm_media_player;sa=' . $_GET['sa'];
-	$modSettings['SCM_selected_playlist'] = empty($modSettings['SCM_selected_playlist']) ? 0 : $modSettings['SCM_selected_playlist'];
-
-	// Gather everything we need for the "default" playlist:
-	$func = function_exists('safe_unserialize') ? 'safe_unserialize' : 'unserialize';
-	$songs = !empty($modSettings['SCM_playlist']) ? $modSettings['SCM_playlist'] : '';
-	$songs = @$func($songs);
-	if (empty($songs) || !is_array($songs))
-		$songs = array();
-	unset($songs['__NAME__']);
-	$context['SCMP_playlists'] = array(
-		0 => array(
-			'id' => 0,
-			'name' => !empty($songs['__NAME__']) ? $songs['__NAME__'] : $txt['SCM_playlists_Default'],
-			'songs' => $songs,
-		),
-	);
-
-	// Gather up any other playlists available in the $modSettings array:
-	$max_id = 0;
-	foreach ($modSettings as $variable => $value)
-	{
-		if (preg_match('~SCM_playlist_([\d]+)~i', $variable, $matches) && !empty($value))
-		{
-			$songs = @$func($value);
-			if (empty($songs) || !is_array($songs))
-				$songs = array();
-			$id = $matches[1];
-			$max_id = max($id, $max_id);
-			unset($songs['__NAME__']);
-			$context['SCMP_playlists'][$id] = array(
-				'id' => $id,
-				'name' => !empty($songs['__NAME__']) ? $songs['__NAME__'] : sprintf($txt['SCMP_playlist_which'], $id),
-				'songs' => $songs,
-			);
-		}
-	}
-	asort($context['SCMP_playlists']);
-
 	// Saving?
 	if (isset($_GET['save']))
 	{
@@ -245,37 +207,40 @@ function SCMP_Lists()
 		saveDBSettings($config_vars);
 		redirectexit('action=admin;area=scm_media_player;sa=playlists');
 	}
-	// Creating a new playlist?  Then figure out what the new playlist ID is:
-	elseif ($_GET['sa'] == 'new' || isset($_POST['new_playlist']))
-	{
-		$max_id++;
-		$context['SCMP_playlists'][$max_id] = array(
-			'id' => $max_id,
-			'name' => sprintf($txt['SCMP_playlist_which'], $max_id),
-			'songs' => array(),
-		);
-		unset($_GET['save']);
-		SCMP_Edit($max_id);
-	}
-	// Editing an existing playlist?
-	elseif (isset($_GET['edit']))
-		SCMP_Edit((int) $_GET['edit']);
-	// Removing an existing playlist?
-	elseif (isset($_GET['remove']))
-		SCMP_Remove((int) $_GET['remove']);
+
+	// Define the template stuff we need:
+	loadLanguage('ManageBoards');
+	$context['page_title' ] = $txt['SCM_playlists'];
+	$context['sub_template'] = 'SCMP_playlist';
+	$context['post_url'] = $scripturl . '?action=admin;area=scm_media_player;sa=' . $_REQUEST['sa'];
+	$modSettings['SCM_selected_playlist'] = empty($modSettings['SCM_selected_playlist']) ? 0 : $modSettings['SCM_selected_playlist'];
 }
 
 /*******************************************************************************/
 // Function handling editing the playlist:
 /*******************************************************************************/
-function SCMP_Edit($list)
+function SCMP_Edit()
 {
 	global $txt, $scripturl, $context, $settings, $modSettings;
 
-	// Attempting to access a playlist that doesn't exist?
-	// NOTE: Creating a new playlist SHOULD NOT create an error!!!!
-	if (!isset($context['SCMP_playlists'][$list]) && !isset($_GET['save']))
-		fatal_lang_error('SCM_playlist_nonexistant', false);
+	if ($_REQUEST['sa'] == 'new')
+	{
+		// Create a new playlist entry:
+		$list = max(array_keys($context['SCMP_playlists'])) + 1;
+		$context['SCMP_playlists'][$list] = array(
+			'id' => $list,
+			'name' => sprintf($txt['SCMP_playlist_which'], $list),
+			'songs' => array()
+		);
+	}
+	else
+	{
+		// Attempting to edit a playlist that doesn't exist?
+		$list = (int) (!empty($_GET['list']) ? $_GET['list'] : false);
+		if (!isset($context['SCMP_playlists'][$list]) && !isset($_GET['save']))
+			fatal_lang_error('SCM_playlist_nonexistant', false);
+	}
+		
 
 	// Saving?
 	if (isset($_GET['save']))
@@ -283,7 +248,7 @@ function SCMP_Edit($list)
 		checkSession();
 
 		// Get the new playlist ready to store in the forum settings:
-		$list = 'SCM_playlist' . (!empty($list) ? '_' . ((int) $list) : '');
+		$playlist = 'SCM_playlist' . (!empty($list) ? '_' . ((int) $list) : '');
 		$songs = array(
 			'__NAME__' => $_POST['SCM_playlists_name'],
 		);
@@ -294,16 +259,25 @@ function SCMP_Edit($list)
 			else
 			{
 				$data = $_POST['SCM_url'][$id];
-				$songs[$title] = (strpos($data, 'http://') !== 0 && strpos($data, 'https://') !== 0 ? 'http://' : '') . $data;
+				$songs[$title] = (strpos($data, 'http://') === false && strpos($data, 'https://') === false && strpos($data, '//') === false ? 'http://' : '') . $data;
 			}
 		}
 		$serialize = function_exists('safe_serialize') ? 'safe_serialize' : 'serialize';
-		$_POST[$list] = empty($songs) ? false : $serialize($songs);
-		$config_vars[] = array('text', $list);
+		$_POST[$playlist] = empty($songs) ? false : $serialize($songs);
+		$config_vars[] = array('text', $playlist);
 		$_POST['SCM_last_update'] = time();
 		$config_vars[] = array('int', 'SCM_last_update');
 
-		// Save the settings for this mod:
+		// Update the cached playlists with the new information:
+		$context['SCMP_playlists'][$list] = array(
+			'id' => $list,
+			'name' => $songs['__NAME__'],
+		);
+		unset($songs['__NAME__']);
+		$context['SCMP_playlists'][$list]['songs'] = $songs;
+		cache_put_data('SCMP_playlists', $context['SCMP_playlists'], 86400);
+
+		// Save the settings for this mod before redirecting to playlists:
 		saveDBSettings($config_vars);
 		redirectexit('action=admin;area=scm_media_player;sa=playlists');
 	}
@@ -312,7 +286,7 @@ function SCMP_Edit($list)
 	$config_vars = array(
 		array('text', 'SCM_playlists_name', 'size' => 40),
 		'',
-		array('callback', 'SCM_playlists'),
+		array('callback', 'SCM_songs'),
 	);
 
 	// Get the playlist we are editing:
@@ -320,9 +294,7 @@ function SCMP_Edit($list)
 	$modSettings['SCM_playlists_name'] = $context['SCMP_songlist']['name'];
 
 	// Get ready to show the settings to the user:
-	$context['html_headers'] .= '
-	<link rel="stylesheet" type="text/css" href="' . $settings['theme_url'] . '/css/SCMP.css" />';
-	$context['post_url'] = $scripturl . '?action=admin;area=scm_media_player;sa=' . $_GET['sa'] . ';edit=' . $list . ';save';
+	$context['post_url'] = $scripturl . '?action=admin;area=scm_media_player;sa=' . $_REQUEST['sa'] . ($_REQUEST['sa'] == 'edit' ? ';list=' . $list : '') . ';save';
 	$context['settings_title'] = $txt['SCM_playlist'] . ': ' . $context['SCMP_songlist']['name'];
 	$context['sub_template'] = 'show_settings';
 	prepareDBSettingContext($config_vars);
@@ -331,13 +303,13 @@ function SCMP_Edit($list)
 /*******************************************************************************/
 // Function handling delete a playlist:
 /*******************************************************************************/
-function SCMP_Remove($list)
+function SCMP_Remove()
 {
 	global $context, $modSettings, $smcFunc;
 
 	// Attempting to access a playlist that doesn't exist or can't be deleted?
-	$list = (int) $list;
-	if (empty($list))
+	$list = (int) (!empty($_GET['list']) ? $_GET['list'] : false);
+	if ($list === false || $list === 0)
 		fatal_lang_error('SCM_cannot_remove_default', false);
 	if (!isset($context['SCMP_playlists'][$list]))
 		fatal_lang_error('SCM_playlist_nonexistant', false);
@@ -352,11 +324,17 @@ function SCMP_Remove($list)
 		)
 	);
 
+	// Save the revised playlist array in the SMF cache:
+	unset($context['SCMP_playlists'][$list]);
+	cache_put_data('SCMP_playlists', $context['SCMP_playlists'], 86400);
+
 	// If this playlist is selected, change back to default playlist:
 	if (!empty($modSettings['SCM_selected_playlist']) && $modSettings['SCM_selected_playlist'] == $list)
 	{
 		$_POST['SCM_selected_playlist'] = 0;
 		$config_vars[] = array('int', 'SCM_selected_playlist');
+		$_POST['SCM_last_update'] = time();
+		$config_vars[] = array('int', 'SCM_last_update');
 	}
 
 	// Record changes to the database and/or cache:

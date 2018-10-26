@@ -35,17 +35,65 @@ function SCM_Load()
 	if ($disabled)
 		$_SESSION['SCM_last_update'] = $enabled = false;
 
-	// Figure out which playlist we are going to play:
-	$selected = !empty($modSettings['SCM_selected_playlist']) ? '_' . $modSettings['SCM_selected_playlist'] : '';
-	$playlist = !empty($modSettings['SCM_playlist' . $selected]) ? $modSettings['SCM_playlist' . $selected] : (!empty($modSettings['SCM_playlist']) ? $modSettings['SCM_playlist'] : false);
-	if (empty($playlist))
-		$enabled = false;
-	$enabled = !empty($enabled);
+	// Build the SCMP playlist array if not cached:
+	if (($context['SCMP_playlists'] = cache_get_data('SCMP_playlists', 86400)) == null)
+	{
+		// Gather everything we need for the "default" playlist:
+		$func = function_exists('safe_unserialize') ? 'safe_unserialize' : 'unserialize';
+		$songs = !empty($modSettings['SCM_playlist']) ? $modSettings['SCM_playlist'] : '';
+		$songs = @$func($songs);
+		if (empty($songs) || !is_array($songs))
+			$songs = array();
+		$context['SCMP_playlists'] = array(
+			0 => array(
+				'id' => 0,
+				'name' => !empty($songs['__NAME__']) ? $songs['__NAME__'] : $txt['SCM_playlists_Default'],
+			),
+		);
+		unset($songs['__NAME__']);
+		$context['SCMP_playlists'][0]['songs'] = $songs;	
 
-	// If mod is disabled, then abort if current user has been updated yet:
-	if (!$enabled && !empty($_SESSION['SCM_last_update']) && !empty($modSettings['SCM_last_update']) && $_SESSION['SCM_last_update'] > $modSettings['SCM_last_update'])
+		// Gather up any other playlists available in the $modSettings array:
+		foreach ($modSettings as $variable => $value)
+		{
+			if (preg_match('~SCM_playlist_([\d]+)~i', $variable, $matches) && !empty($value))
+			{
+				$songs = @$func($value);
+				if (empty($songs) || !is_array($songs))
+					$songs = array();
+				$id = $matches[1];
+				$context['SCMP_playlists'][$id] = array(
+					'id' => $id,
+					'name' => !empty($songs['__NAME__']) ? $songs['__NAME__'] : sprintf($txt['SCMP_playlist_which'], $id),
+				);
+				unset($songs['__NAME__']);
+				$context['SCMP_playlists'][$id]['songs'] = $songs;
+			}
+		}
+		asort($context['SCMP_playlists']);
+		
+		// Save the playlist information in the SMF cache:
+		cache_put_data('SCMP_playlists', $context['SCMP_playlists'], 86400);
+	}
+
+	// Does the specified playlist exist?  If not, return to caller:
+	$selected = !empty($modSettings['SCM_selected_playlist']) ? (int) $modSettings['SCM_selected_playlist'] : 0;
+	if (empty($context['SCMP_playlists'][$selected]['songs']))
+		return;
+		
+	// Should we revise the playlist currently playlist?
+	$_SESSION['SCMP_selected'] = $selected;
+
+	// Do we need to update the current player?  If not, return to caller:
+	if (!empty($_SESSION['SCM_last_update']) && !empty($modSettings['SCM_last_update']) && $_SESSION['SCM_last_update'] < $modSettings['SCM_last_update'])
 		return;
 	$_SESSION['SCM_last_update'] = time();
+
+	// Build the playlist for the Javascript code:
+	$echo = array();
+	foreach ($context['SCMP_playlists'][$selected]['songs'] as $title => $url)
+		$echo[$title] = '{\'title\':' . JavaScriptEscape($title) . ',\'url\':' . JavaScriptEscape($url) . '}';
+	$playlist = implode($echo, ',');
 
 	// Decide on the CSS for the player:
 	if (!$enabled || empty($playlist))
@@ -62,17 +110,8 @@ function SCM_Load()
 	if (substr($css, 0, 4) !== 'http')
 		$css = $boardurl . '/SCM_Music_Player/' . $css;
 
-	// Unserialize the playlist so that we can insert it:
-	$unserialize = function_exists('safe_unserialize') ? 'safe_unserialize' : 'unserialize';
-	$playlist = !empty($playlist) ? $unserialize($playlist) : array();
-	$echo = array();
-	foreach ($playlist as $title => $url)
-		$echo[$title] = '{\'title\':' . JavaScriptEscape($title) . ',\'url\':' . JavaScriptEscape($url) . '}';
-	$playlist = implode($echo, ',');
-
 	// Save some decisions that need to be made in the code:
 	$placement = !empty($modSettings['SCM_placement']) && $modSettings['SCM_placement'] == 'bottom' ? 'bottom' : 'top';
-	$include_playlist = empty($_SESSION['SCM_last_update']) || empty($modSettings['SCM_last_update']) || $_SESSION['SCM_last_update'] < $modSettings['SCM_last_update'];
 	$autoplay = !empty($modSettings['SCM_autoplay']);
 	if ($autoplay && !empty($modSettings['SCM_autoplay_from']) && !empty($modSettings['SCM_autoplay_to']))
 	{
@@ -89,7 +128,7 @@ function SCM_Load()
 	<script type="text/javascript" src="' . $boardurl . '/SCM_Music_Player/script.js" data-config="{
 		\'skin\': \'' . $css . '\',
 		\'volume\': ' . ((int) (!isset($modSettings['SCM_volume']) ? 50 : $modSettings['SCM_volume'])) . ',
-		\'autoplay\': ' . ($autoplay ? 'true' : 'false'). ',
+		\'autoplay\': ' . ($enabled && $autoplay ? 'true' : 'false'). ',
 		\'shuffle\': ' . (!empty($modSettings['SCM_shuffle']) ? 'true' : 'false') . ',
 		\'repeat\': ' . (!isset($modSettings['SCM_repeat']) ? '1' : $modSettings['SCM_repeat']) . ',
 		\'placement\': \'' . $placement . '\',
@@ -99,10 +138,28 @@ function SCM_Load()
 
 	// Let's make any changes that the admin have made to the player:
 	$context['html_headers'] .= '
-	<script type="text/javascript">' . (!$enabled ? '
-		SCM.stop();' : '') . ($enabled ? '
-		SCM.placement("' . $placement . '");' .
-		($include_playlist ? 'SCM.loadPlaylist([' . $playlist . ']);' : '') : '') . '
+	<script type="text/javascript">';
+
+	// Did the placement of the SCMP player change?
+	if (isset($_SESSION['SCMP_placement']) && $_SESSION['SCMP_placement'] <> $placement)
+		$context['html_headers'] .= '
+		SCM.placement("' . $placement . '");';
+	$_SESSION['SCMP_placement'] = $placement;
+
+	// Did the selected/current playlist change?
+	if (isset($_SESSION['SCMP_selected']) && $_SESSION['SCMP_selected'] <> $selected)
+		$context['html_headers'] .= '
+		SCM.loadPlaylist([' . $playlist . ']);';
+	$_SESSION['SCMP_selected'] = $selected;
+
+	// Is the SCMP player disabled?
+	$context['html_headers'] .= '
+		if (SCM.isPlay()) {
+			SCM.' . ($enabled ? 'start' : 'stop') . '();
+		}';
+
+	// Finish the header stuff for this mod:
+	$context['html_headers'] .= '
 	</script>
 	<!-- SCM Music Player script end -->';
 }

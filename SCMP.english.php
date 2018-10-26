@@ -47,7 +47,8 @@ $txt['SCM_playlists'] = 'Playlists';
 $txt['SCM_playlists_active'] = 'Active';
 $txt['SCM_playlists_name'] = 'Name of Playlist';
 $txt['SCM_playlists_Default'] = 'Default playlist';
-$txt['SCM_new_playlist'] = 'Create New Playlist';
+$txt['SCM_edit_playlist'] = 'Song List';
+$txt['SCM_new_playlist'] = 'New Playlist';
 $txt['SCMP_playlist_which'] = 'Playlist %d';
 $txt['SCMP_remove'] = 'remove';
 

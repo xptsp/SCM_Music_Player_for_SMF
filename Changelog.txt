@@ -1,3 +1,6 @@
+v1.3 - March 27th, 2017
+o Added check to see if function safe_serialize exists before use.
+
 v1.2 - March 23th, 2017
 o Changed admin area for mod into its own seperate admin area.
 o Admin area now has 3 subsections: Settings, Playlists, Skins.

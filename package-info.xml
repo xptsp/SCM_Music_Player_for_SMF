@@ -3,8 +3,8 @@
 <package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
 	<id>dougiefresh:PMIH</id>
 	<name>SCM Player for SMF</name>
-	<version>1.2</version>
 	<type>modification</type>
+	<version>1.3</version>
 
 	<install for="2.0 - 2.0.99, 2.1 Beta 2">
 		<readme type="file" parsebbc="true">readme.txt</readme>

@@ -18,9 +18,9 @@ function SCM_Load()
 
 	// Disable the player if we are not allowed to listen to Site Music:
 	$disabled = !allowedTo('listen_to_music');
+	$action = isset($_GET['action']) && $_GET['action'] != 'forum' ? $_GET['action'] : false;
 	if (!$disabled)
 	{
-		$action = isset($_GET['action']) && $_GET['action'] != 'forum' ? $_GET['action'] : false;
 		$disabled |= (!empty($modSettings['SCM_hide_boardindex']) && empty($action) && empty($board) && empty($topic));
 		$disabled |= (!empty($modSettings['SCM_hide_messageindex']) && empty($action) && !empty($board) && empty($topic));
 		$disabled |= (!empty($modSettings['SCM_hide_posts']) && !empty($topic));

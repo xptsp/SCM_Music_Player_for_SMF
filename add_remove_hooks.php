@@ -20,9 +20,11 @@ if (SMF == 'SSI')
 	
 // Define the hooks
 $hook_functions = array(
+/* SMF 2.x hooks */
 	'integrate_pre_include' => '$sourcedir/Subs-SCMP.php',
 	'integrate_load_theme' => 'SCM_Load',
-	'integrate_modify_modifications' => 'SCM_Area',
+/* SMF 2.x Admin hooks */
+	'integrate_admin_include' => '$sourcedir/Subs-SCMP_Admin.php',
 	'integrate_admin_areas' => 'SCM_Admin',
 	'integrate_load_permissions' => 'SCM_Permissions',
 );

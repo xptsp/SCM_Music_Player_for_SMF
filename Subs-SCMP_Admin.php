@@ -197,8 +197,8 @@ function SCMP_playlists($return_config = false)
 				$playlist[$title] = (strpos($data, 'http://') !== 0 && strpos($data, 'https://') !== 0 ? 'http://' : '') . $data;
 			}
 		}
-		$seralize = function_exists('safe_serialize') ? 'safe_serialize' : 'serialize';
-		$_POST['SCM_playlist'] = empty($playlist) ? false : $seralize($playlist);
+		$serialize = function_exists('safe_serialize') ? 'safe_serialize' : 'serialize';
+		$_POST['SCM_playlist'] = empty($playlist) ? false : $serialize($playlist);
 		$config_vars[] = array('text', 'SCM_playlist');
 		$_POST['SCM_last_update'] = time();
 		$config_vars[] = array('int', 'SCM_last_update');

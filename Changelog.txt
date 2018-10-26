@@ -1,3 +1,6 @@
+v1.6 - August 10th, 2017
+o Fixed a lot of decision-making code to make the SCM player work properly.
+
 v1.5 - August 9th, 2017
 o Removed debug code from main admin hook.
 

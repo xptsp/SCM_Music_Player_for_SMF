@@ -34,31 +34,43 @@ function SCM_Load()
 	if ($disabled)
 		$_SESSION['SCM_last_update'] = $modSettings['SCM_enabled'] = false;
 
-	// If mod is disabled, then abort if current user has been updated yet:
-	if (empty($modSettings['SCM_enabled']) || empty($modSettings['SCM_playlist']))
-		if (!empty($_SESSION['SCM_last_update']) && !empty($modSettings['SCM_last_update']) && $_SESSION['SCM_last_update'] > $modSettings['SCM_last_update'])
-			return;
-
 	// Figure out which playlist we are going to play:
+	$selected = !empty($modSettings['SCM_selected_playlist']) ? '_' . $modSettings['SCM_selected_playlist'] : '';
+	$playlist = !empty($modSettings['SCM_playlist' . $selected]) ? $modSettings['SCM_playlist' . $selected] : (!empty($modSettings['SCM_playlist']) ? $modSettings['SCM_playlist'] : false);
+	if (empty($playlist))
+		$modSettings['SCM_enabled'] = false;
+	$enabled = !empty($modSettings['SCM_enabled']);
+
+	// If mod is disabled, then abort if current user has been updated yet:
+	if (!$enabled && !empty($_SESSION['SCM_last_update']) && !empty($modSettings['SCM_last_update']) && $_SESSION['SCM_last_update'] > $modSettings['SCM_last_update'])
+		return;
 	$_SESSION['SCM_last_update'] = time();
-	$selected = !empty($modSettings['SCM_selected_playlist']) ? $modSettings['SCM_selected_playlist'] : '';
-	$playlist = !empty($modSettings['SCM_playlist_' . $selected]) ? $modSettings['SCM_playlist_' . $selected] : (!empty($modSettings['SCM_playlist']) ? $modSettings['SCM_playlist'] : false);
 
 	// Decide on the CSS for the player:
-	if (empty($modSettings['SCM_enabled']) || empty($modSettings['SCM_playlist']))
+	if (!$enabled || empty($playlist))
 		$css = $boardurl . '/Themes/default/css/hide_player.css';
-	elseif (!empty($modSettings['SCM_style']) && !empty($modSettings['SCM_style']))
-		$css = 'skins/' . (!isset($modSettings['SCM_style']) ? 'aquaBlue' : $modSettings['SCM_style']) . '/skin.css';
-	elseif (!empty($modSettings['SCM_custom_url']))
-		$css = $modSettings['SCM_custom_url'];
-	else
+	elseif (!empty($modSettings['SCM_style']))
+	{
+		if ($modSettings['SCM_style'] == 'custom' && !empty($modSettings['SCM_custom_url']))
+			$css = $modSettings['SCM_custom_url'];
+		else
+			$css = 'skins/' . (!isset($modSettings['SCM_style']) ? 'aquaBlue' : $modSettings['SCM_style']) . '/skin.css';
+	}
+	if (empty($css))
 		$css = 'skins/aquaBlue/skin.css';
 
 	// Unserialize the playlist so that we can insert it:
-	$playlist = !empty($playlist) ? safe_unserialize($playlist) : array();
+	$unserialize = function_exists('safe_unserialize') ? 'safe_unserialize' : 'unserialize';
+	$playlist = !empty($playlist) ? $unserialize($playlist) : array();
 	$echo = array();
 	foreach ($playlist as $title => $url)
 		$echo[$title] = '{\'title\':' . JavaScriptEscape($title) . ',\'url\':' . JavaScriptEscape($url) . '}';
+	$playlist = implode($echo, ',');
+
+	// Save some decisions that need to be made in the code:
+	$placement = !empty($modSettings['SCM_placement']) && $modSettings['SCM_placement'] == 'bottom' ? 'bottom' : 'top';
+	$include_playlist = empty($_SESSION['SCM_last_update']) || empty($modSettings['SCM_last_update']) || $_SESSION['SCM_last_update'] < $modSettings['SCM_last_update'];
+	$autoplay = !empty($modSettings['SCM_autoplay']);
 
 	// Insert the player into the HTML header:
 	$context['html_headers'] .= '
@@ -66,26 +78,21 @@ function SCM_Load()
 	<script type="text/javascript" src="http://scmplayer.net/script.js" data-config="{
 		\'skin\': \'' . $css . '\',
 		\'volume\': ' . ((int) (!isset($modSettings['SCM_volume']) ? 50 : $modSettings['SCM_volume'])) . ',
-		\'autoplay\': ' . (!empty($modSettings['SCM_enabled']) && !empty($modSettings['SCM_playlist']) && !empty($modSettings['SCM_autoplay']) ? 'true' : 'false') . ',
+		\'autoplay\': ' . ($autoplay ? 'true' : 'false'). ',
 		\'shuffle\': ' . (!empty($modSettings['SCM_shuffle']) ? 'true' : 'false') . ',
 		\'repeat\': ' . (!isset($modSettings['SCM_repeat']) ? '1' : $modSettings['SCM_repeat']) . ',
-		\'placement\': \'' . (isset($modSettings['SCM_placement']) && $modSettings['SCM_placement'] == 'bottom' ? 'bottom' : 'top') . '\',
+		\'placement\': \'' . $placement . '\',
 		\'showplaylist\': ' . (!empty($modSettings['SCM_show_playlist']) ? 'true' : 'false') . ',
-		\'playlist\': [' . implode($echo, ',') . ']}">
+		\'playlist\': [' . $playlist . ']}">
 	</script>';
 
 	// Let's make any changes that the admin have made to the player:
 	$context['html_headers'] .= '
-	<script type="text/javascript">
-		SCM.skin("' . $css . '");
-		SCM.placement("' . (isset($modSettings['SCM_placement']) && $modSettings['SCM_placement'] == 'bottom' ? 'bottom' : 'top') . '");';
-	if (!empty($_SESSION['SCM_last_update']) && !empty($modSettings['SCM_last_update']) && $_SESSION['SCM_last_update'] < $modSettings['SCM_last_update'])
-		$context['html_headers'] .= '
-		SCM.loadPlaylist([' . implode($echo, ',') . ']);';
-	if (empty($modSettings['SCM_enabled']))
-		$context['html_headers'] .= '
-		SCM.stop();';
-	$context['html_headers'] .= '
+	<script type="text/javascript">' . (!$enabled ? '
+		SCM.stop();' : '') . '
+		SCM.skin("' . $css . '");' . ($enabled ? '
+		SCM.placement("' . $placement . '");' . 
+		($include_playlist ? 'SCM.loadPlaylist([' . $playlist . ']);' : '') : '') . '
 	</script>
 	<!-- SCM Music Player script end -->';
 }

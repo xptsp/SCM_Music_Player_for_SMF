@@ -1,3 +1,6 @@
+v1.5 - August 9th, 2017
+o Removed debug code from main admin hook.
+
 v1.4 - July 5th, 2017
 o Fixed the hook that adds new section to the admin panel, which caused issues in Core Features.
 

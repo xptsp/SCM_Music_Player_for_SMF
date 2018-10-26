@@ -15,7 +15,6 @@ if (!defined('SMF'))
 function SCM_Admin(&$areas)
 {
 	global $txt;
-	return;
 	loadLanguage('SCMP');
 	$areas['config']['areas']['scm_media_player'] = array(
 		'label' => $txt['SCM_area'],

@@ -1,3 +1,9 @@
+v1.0.2 - January 7th, 2017
+o Replaced invalid redirection URL in [b]package-info.xml[/b].
+o Replaced deprecated [b]center[/b] tag with CSS directives to center the table.
+o Added code to make sure that a skin style was defined if the variable wasn't set.
+o Changed code so that empty title/url combo was added after playlist.
+
 v1.0.1 - December 19th, 2016
 o Complete rewrite, using SCM Music Player as basis instead of pure HTML5 audio tag.
 

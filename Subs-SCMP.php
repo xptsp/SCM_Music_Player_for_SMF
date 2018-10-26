@@ -32,7 +32,7 @@ function SCM_Load()
 		$css = 'skins/aquaBlue/skin.css';
 
 	// Unserialize the playlist so that we can insert it:
-	$playlist = safe_unserialize($modSettings['SCM_playlist']);
+	$playlist = !empty($modSettings['SCM_playlist']) ? safe_unserialize($modSettings['SCM_playlist']) : array();
 	$echo = array();
 	foreach ($playlist as $title => $url)
 		$echo[$title] = '{\'title\':' . JavaScriptEscape($title) . ',\'url\':' . JavaScriptEscape($url) . '}';
@@ -42,7 +42,7 @@ function SCM_Load()
 	<!-- SCM Music Player http://scmplayer.net -->
 	<script type="text/javascript" src="http://scmplayer.net/script.js" data-config="{
 		\'skin\': \'' . $css . '\',
-		\'volume\': ' . (int) (!isset($modSettings['SCM_volume']) ? 50 : $modSettings['SCM_volume']) . ',
+		\'volume\': ' . ((int) (!isset($modSettings['SCM_volume']) ? 50 : $modSettings['SCM_volume'])) . ',
 		\'autoplay\': ' . (!empty($modSettings['SCM_enabled']) && !empty($modSettings['SCM_playlist']) && !empty($modSettings['SCM_autoplay']) ? 'true' : 'false') . ',
 		\'shuffle\': ' . (!empty($modSettings['SCM_shuffle']) ? 'true' : 'false') . ',
 		\'repeat\': ' . (!isset($modSettings['SCM_repeat']) ? '1' : $modSettings['SCM_repeat']) . ',
@@ -110,7 +110,7 @@ function SCM_Modify($return_config = false)
 	// Saving?
 	if (isset($_GET['save']))
 	{
-		//checkSession();
+		checkSession();
 
 		// Get the new playlist ready to store in the forum settings:
 		$playlist = array();
@@ -128,7 +128,7 @@ function SCM_Modify($return_config = false)
 		$_POST['SCM_playlist'] = empty($playlist) ? false : safe_serialize($playlist);
 
 		// Get the new style for the player:
-		$_POST['SCM_custom_url'] = !empty($_POST['SCM_custom_url']) ? $_POST['SCM_custom_url'] : false;
+		$_POST['SCM_custom_url'] = !empty($_POST['SCM_custom_url']) ? $_POST['SCM_custom_url'] : '';
 		$config_vars[] = array('text', 'SCM_custom_url');
 		$_POST['SCM_style'] = !empty($_POST['SCM_style']) ? $_POST['SCM_style'] : 'aquaBlue';
 		$_POST['SCM_style'] = ($_POST['SCM_style'] == '_custom_' && !empty($_POST['SCM_custom_url']) ? '_custom' : SCM_styles($_POST['SCM_style']));
@@ -140,6 +140,10 @@ function SCM_Modify($return_config = false)
 		saveDBSettings($config_vars);
 		redirectexit('action=admin;area=modsettings;sa=scm_music_player');
 	}
+
+	// Make sure certain settings are defaulted if not set:
+	$modSettings['SCM_style'] = !empty($modSettings['SCM_style']) ? $modSettings['SCM_style'] : 'aquaBlue';
+	$modSettings['SCM_volume'] = !isset($modSettings['SCM_volume']) ? 50 : $modSettings['SCM_volume'];
 
 	// Get ready to show the settings to the user:
 	$context['post_url'] = $scripturl . '?action=admin;area=modsettings;save;sa=scm_music_player';
@@ -175,13 +179,12 @@ function template_callback_SCM_playlist()
 						<dd>
 							<strong><u>', $txt['SCM_music_URL'], '</u></strong>
 						</dd>';
+	$counter = 0;
 	if (!empty($modSettings['SCM_playlist']))
 	{
 		$playlist = safe_unserialize($modSettings['SCM_playlist']);
-		$counter = 0;
 		if (count($playlist))
 		{
-			$playlist[''] = '';
 			foreach ($playlist as $title => $url)
 			{
 				$counter++;
@@ -190,8 +193,8 @@ function template_callback_SCM_playlist()
 							<input type="text" name="SCM_title[]" value=', JavaScriptEscape($title), ' size="25" class="input_text" />
 						</dt>
 						<dd id="url_', $counter, '">
-							<input type="text" name="SCM_url[]" value=', JavaScriptEscape($url), ' size="40" class="input_text" />', ($counter > 1 ? '
-							<a href="javascript:void(0);" onclick="removeTrack(' . $counter .'); return false;"><img src="' . $boardurl . '/Themes/default/images/icons/quick_remove.gif"></a>' : ''), '
+							<input type="text" name="SCM_url[]" value=', JavaScriptEscape($url), ' size="40" class="input_text" />
+							<a href="javascript:void(0);" onclick="removeTrack(', $counter .'); return false;"><img src="', $boardurl, '/Themes/default/images/icons/quick_remove.gif"></a>
 						</dd>';
 			}
 		}
@@ -212,6 +215,7 @@ function template_callback_SCM_playlist()
 								setOuterHTML(document.getElementById("url_" + track), "");
 							}
 							document.write(\'<dt><input type="submit" name="addtrack" id="addtrack" value="', $txt['SCM_add_track'], '" onclick="addTrack(); return false;" class="button_submit" /></dt>\');
+							addTrack();
 						</script>';
 }
 
@@ -219,7 +223,7 @@ function template_callback_SCM_style()
 {
 	global $modSettings, $txt;
 	echo '
-						<center><table>';
+						<table style="margin-left:auto; margin-right: auto;">';
 	foreach (SCM_styles() as $style)
 		echo '
 							<tr>
@@ -231,7 +235,7 @@ function template_callback_SCM_style()
 								<td><input type="radio" name="SCM_style"', ($modSettings['SCM_style'] == '_custom_' ? ' checked="checked"' : ''), ' value="_custom_" />', $txt['SCM_custom_style'], '</td>
 								<td><input type="text" name="SCM_custom_url" size="50"', (isset($modSettings['SCM_custom_url']) && $modSettings['SCM_style'] == '_custom_' ? 'value="' . $modSettings['SCM_custom_url'] . '"' : ''), ' /></td>
 							</tr>
-						</table></center>';
+						</table>';
 }
 
 ?>

@@ -59,6 +59,8 @@ function SCM_Load()
 	}
 	if (empty($css))
 		$css = 'skins/aquaBlue/skin.css';
+	if (substr($css, 0, 4) !== 'http')
+		$css = $boardurl . '/SCM_Music_Player/' . $css;
 
 	// Unserialize the playlist so that we can insert it:
 	$unserialize = function_exists('safe_unserialize') ? 'safe_unserialize' : 'unserialize';

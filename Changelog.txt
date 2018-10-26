@@ -1,3 +1,6 @@
+v1.8 - August 19th, 2017
+o Changed GitHub source from [b]cshum/scm-music-player[/b] to [b]icze4r/scm-music-player-SSL-[/b]
+
 v1.7 - August 18th, 2017
 o Fixed issue where enabling the player apparently didn't take.
 o Added source files to SCM Music Player to mod.

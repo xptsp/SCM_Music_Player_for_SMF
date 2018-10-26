@@ -38,7 +38,7 @@ o [url=http://www.simplemachines.org/community/index.php?topic=550549.0]Music Mo
 This mod was tested on SMF 2.0.12, but should work on any version of SMF 2.0.x.  SMF 1.x and SMF 2.1 is not and will not be supported.
 
 [color=blue][b][size=12pt][u]Translators[/u][/size][/b][/color]
-o Spanish Lation: [url=https://www.simplemachines.org/community/index.php?action=profile;u=322597]Rock Lee[/url]
+o Spanish Latin: [url=https://www.simplemachines.org/community/index.php?action=profile;u=322597]Rock Lee[/url]
 
 [color=blue][b][size=12pt][u]Changelog[/u][/size][/b][/color]
 The changelog has been removed and can be seen at [url=http://www.xptsp.com/board/index.php?topic=733.msg1176#msg1176]XPtsp.com[/url].

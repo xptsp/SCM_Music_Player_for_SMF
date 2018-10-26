@@ -46,14 +46,13 @@ $txt['SCM_style_title'] = 'Estilo &amp; opciones de color';
 $txt['SCM_custom_style'] = 'Enlace personalizado:';
 
 $txt['SCM_playlists'] = 'Listas de reproducci&oacute;n';
-//$txt['SCM_playlists_active'] = 'Active';
-//$txt['SCM_playlists_name'] = 'Name of Playlist';
-//$txt['SCM_playlists_Default'] = 'Default playlist';
-//$txt['SCM_new_playlist'] = 'Create New Playlist';
-//$txt['SCMP_playlist_which'] = 'Playlist %d';
-//$txt['SCMP_remove'] = 'remove';
+$txt['SCM_playlists_active'] = 'Activo';
+$txt['SCM_playlists_name'] = 'Nombre de la lista de reproducci&oacute;n';
+$txt['SCM_playlists_Default'] = 'Lista de reproducci&oacute;n predeterminada';
+$txt['SCM_new_playlist'] = 'Crear nueva lista de reproducci&oacute;n';
+$txt['SCMP_playlist_which'] = 'Lista de reproducci&oacute;n %d';
+$txt['SCMP_remove'] = 'Eliminar';
 
-//$txt['SCM_playlist_nonexistant'] = 'The specified playlist does not exist!';
-//$txt['SCM_cannot_remove_default'] = 'Cannot remove the default playlist!';
-
+$txt['SCM_playlist_nonexistant'] = '&iexcl;La lista de reproducci&oacute;n especificada no existe!';
+$txt['SCM_cannot_remove_default'] = '&iexcl;No se puede eliminar la lista de reproducci&oacute;n predeterminada!';
 ?>

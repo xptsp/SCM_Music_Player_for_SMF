@@ -29,7 +29,7 @@ function template_SCMP_playlist()
 		echo '
 				<div class="sub_bar">
 					<h3 class="subbg">
-						', $txt['subforums_list'], '
+						', $txt['SCM_playlists'], '
 					</h3>
 				</div>';
 	echo '

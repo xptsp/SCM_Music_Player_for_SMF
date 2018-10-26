@@ -38,6 +38,9 @@ function SCM_Load()
 	// Build the SCMP playlist array if not cached:
 	if (($context['SCMP_playlists'] = cache_get_data('SCMP_playlists', 86400)) == null)
 	{
+		// Load the language file we need for this area:
+		loadLanguage('SCMP');
+
 		// Gather everything we need for the "default" playlist:
 		$func = function_exists('safe_unserialize') ? 'safe_unserialize' : 'unserialize';
 		$songs = !empty($modSettings['SCM_playlist']) ? $modSettings['SCM_playlist'] : '';

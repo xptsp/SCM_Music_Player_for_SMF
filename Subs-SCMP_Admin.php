@@ -231,7 +231,7 @@ function SCMP_Lists()
 	asort($context['SCMP_playlists']);
 
 	// Saving?
-	if (isset($_POST['save']))
+	if (isset($_GET['save']))
 	{
 		checkSession();
 

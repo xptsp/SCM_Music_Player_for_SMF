@@ -1,5 +1,9 @@
+v2.1 - March 15th, 2018
+o Fixed issue involving selecting playlists other than number 0 (the default).
+
 v2.0 - February 28th, 2018
 o Added ability to add multiple playlists.
+o Admin can choose which playlist gets played by every user.
 
 v1.10 - February 12th, 2018
 o Added Spanish Latin translation, courtsey of [url=https://www.simplemachines.org/community/index.php?action=profile;u=322597]Rock Lee[/url].

@@ -1,0 +1,5 @@
+v1.0.1 - December 19th, 2016
+o Complete rewrite, using SCM Music Player as basis instead of pure HTML5 audio tag.
+
+v1.0 - November 2nd, 2016
+o Initial Release

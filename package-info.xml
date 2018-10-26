@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+	<id>dougiefresh:PMIH</id>
+	<name>SCM Player for SMF</name>
+	<version>1.0.1</version>
+	<type>modification</type>
+
+	<install for="2.0 - 2.0.99">
+		<readme type="file" parsebbc="true">readme.txt</readme>
+		<code>add_remove_hooks.php</code>
+		<require-file name="Subs-SCMP.php" destination="$sourcedir" />
+		<require-file name="SCMP.english.php" destination="$languagedir" />
+		<require-file name="hide_player.css" destination="$themedir/css" />
+		<redirect timeout="5000" url="?action=admin;area=modsettings;sa=SCMP" />
+	</install>
+	<uninstall for="2.0 - 2.0.99">
+		<code>add_remove_hooks.php</code>
+		<remove-file name="$sourcedir/Subs-SCMP.php" />
+		<remove-file name="$languagedir/SCMP.english.php" />
+		<remove-file name="$themedir/css/hide_player.css" />
+	</uninstall>
+</package-info>

@@ -4,7 +4,7 @@
 	<id>dougiefresh:PMIH</id>
 	<name>SCM Player for SMF</name>
 	<type>modification</type>
-	<version>1.8</version>
+	<version>1.10</version>
 
 	<install for="2.0 - 2.0.99, 2.1 Beta 2">
 		<readme type="file" parsebbc="true">readme.txt</readme>
@@ -12,6 +12,8 @@
 		<require-file name="Subs-SCMP.php" destination="$sourcedir" />
 		<require-file name="Subs-SCMP_Admin.php" destination="$sourcedir" />
 		<require-file name="SCMP.english.php" destination="$languagedir" />
+		<require-file name="SCMP.spanish_latin.php" destination="$languagedir" />
+		<require-file name="SCMP.spanish_latin-utf8.php" destination="$languagedir" />
 		<require-file name="hide_player.css" destination="$themedir/css" />
 		<require-file name="SCMP.template.php" destination="$boarddir/Themes/default/" />
 		<require-dir name="SCM_Music_Player" destination="$boarddir" />
@@ -22,6 +24,8 @@
 		<remove-file name="$sourcedir/Subs-SCMP.php" />
 		<remove-file name="$sourcedir/Subs-SCMP_Admin.php" />
 		<remove-file name="$languagedir/SCMP.english.php" />
+		<remove-file name="$languagedir/SCMP.spanish_latin.php" />
+		<remove-file name="$languagedir/SCMP.spanish_latin-utf8.php" />
 		<remove-file name="$themedir/css/hide_player.css" />
 		<remove-file name="$boarddir/Themes/default/SCMP.template.php" />
 		<remove-dir name="$boarddir/SCM_Music_Player" />

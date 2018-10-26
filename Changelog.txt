@@ -1,3 +1,8 @@
+v1.10 - February 12th, 2018
+o Added Spanish Latin translation, courtsey of [url=https://www.simplemachines.org/community/index.php?action=profile;u=322597]Rock Lee[/url].
+o Added translators section to [b]readme.txt[/b] documentation.
+o Added [b]LICENSE[/b] file, to clarify licensing terms.
+
 v1.9 - January 7th, 2018
 o Added time parameters for restricting autoplay setting.
 

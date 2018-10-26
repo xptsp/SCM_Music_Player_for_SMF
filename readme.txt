@@ -1,5 +1,5 @@
 [hr]
-[center][color=red][size=16pt][b]SCM MUSIC PLAYER FOR SMF v1.9[/b][/size][/color]
+[center][color=red][size=16pt][b]SCM MUSIC PLAYER FOR SMF v1.10[/b][/size][/color]
 [url=http://www.simplemachines.org/community/index.php?action=profile;u=253913][b]By Dougiefresh[/b][/url] -> [url=http://custom.simplemachines.org/mods/index.php?mod=4132]Link to Mod[/url]
 [/center]
 [hr]
@@ -36,6 +36,9 @@ o [url=http://www.simplemachines.org/community/index.php?topic=550549.0]Music Mo
 
 [color=blue][b][size=12pt][u]Compatibility Notes[/u][/size][/b][/color]
 This mod was tested on SMF 2.0.12, but should work on any version of SMF 2.0.x.  SMF 1.x and SMF 2.1 is not and will not be supported.
+
+[color=blue][b][size=12pt][u]Translators[/u][/size][/b][/color]
+o Spanish Lation: [url=https://www.simplemachines.org/community/index.php?action=profile;u=322597]Rock Lee[/url]
 
 [color=blue][b][size=12pt][u]Changelog[/u][/size][/b][/color]
 The changelog has been removed and can be seen at [url=http://www.xptsp.com/board/index.php?topic=733.msg1176#msg1176]XPtsp.com[/url].

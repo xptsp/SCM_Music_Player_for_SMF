@@ -6,7 +6,7 @@
 * WITHOUT ANY WARRANTIES; without even any implied warranty of MERCHANTABILITY
 * or FITNESS FOR A PARTICULAR PURPOSE,
 *********************************************************************************
-* Spanish translation by Rock Lee (https://www.bombercode.org) Copyright 2014-2018
+* Spanish translation by Rock Lee (https://www.bombercode.net) Copyright 2014-2018
 *********************************************************************************/
 
 $txt['permissionname_listen_to_music'] = 'Puede escuchar música del sitio';
@@ -15,7 +15,7 @@ $txt['SCM_area'] = 'SCM Music Player';
 $txt['SCM_description'] = '';
 $txt['SCM_title'] = 'Configuración de SCM Music Player';
 
-//$txt['language_settings'] = 'Settings';
+$txt['language_settings'] = 'Ajustes';
 $txt['SCM_enabled'] = '¿Habilitar la reproducción de música de fondo?';
 $txt['SCM_style'] = 'Estilo de reproductor:';
 $txt['SCM_autoplay'] = '¿Reproducción automática de la música de fondo?';

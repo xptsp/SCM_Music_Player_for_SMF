@@ -74,6 +74,14 @@ function SCM_Load()
 	$placement = !empty($modSettings['SCM_placement']) && $modSettings['SCM_placement'] == 'bottom' ? 'bottom' : 'top';
 	$include_playlist = empty($_SESSION['SCM_last_update']) || empty($modSettings['SCM_last_update']) || $_SESSION['SCM_last_update'] < $modSettings['SCM_last_update'];
 	$autoplay = !empty($modSettings['SCM_autoplay']);
+	if ($autoplay && !empty($modSettings['SCM_autoplay_from']) && !empty($modSettings['SCM_autoplay_to']))
+	{
+		$hour = (int) date('G');
+		if ($modSettings['SCM_autoplay_from'] > $modSettings['SCM_autoplay_to'])
+			$autoplay = ($hour >= $modSettings['SCM_autoplay_from']) || ($hour <= $modSettings['SCM_autoplay_to']);
+		else
+			$autoplay = ($hour >= $modSettings['SCM_autoplay_from'] && $hour <= $modSettings['SCM_autoplay_to']);
+	}
 
 	// Insert the player into the HTML header:
 	$context['html_headers'] .= '
@@ -92,8 +100,7 @@ function SCM_Load()
 	// Let's make any changes that the admin have made to the player:
 	$context['html_headers'] .= '
 	<script type="text/javascript">' . (!$enabled ? '
-		SCM.stop();' : '') . '
-		SCM.skin("' . $css . '");' . ($enabled ? '
+		SCM.stop();' : '') . ($enabled ? '
 		SCM.placement("' . $placement . '");' . 
 		($include_playlist ? 'SCM.loadPlaylist([' . $playlist . ']);' : '') : '') . '
 	</script>

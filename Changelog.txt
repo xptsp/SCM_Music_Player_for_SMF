@@ -1,3 +1,6 @@
+v2.0 - February 28th, 2018
+o Added ability to add multiple playlists.
+
 v1.10 - February 12th, 2018
 o Added Spanish Latin translation, courtsey of [url=https://www.simplemachines.org/community/index.php?action=profile;u=322597]Rock Lee[/url].
 o Added translators section to [b]readme.txt[/b] documentation.

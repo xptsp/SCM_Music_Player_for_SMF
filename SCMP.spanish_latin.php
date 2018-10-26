@@ -35,7 +35,7 @@ $txt['SCM_show_playlist'] = '&iquest;Mostrar la lista de reproducci&oacute;n de 
 $txt['SCM_hide_boardindex'] = 'Ocultar bloques en las &aacute;reas del foro';
 $txt['SCM_boardindex'] = '&Iacute;ndice general';
 
-$txt['SCM_playlist'] = 'Listas de reproducci&oacute;n';
+$txt['SCM_playlist'] = 'Lista de reproducci&oacute;n';
 $txt['SCM_playlist_title'] = 'Lista de pistas';
 $txt['SCM_music_title'] = 'T&iacute;tulo de la canci&oacute;n';
 $txt['SCM_music_URL'] = 'Enlace de la canci&oacute;n';
@@ -44,5 +44,16 @@ $txt['SCM_add_track'] = 'Agregar canci&oacute;n';
 $txt['SCM_skins'] = 'Estilos';
 $txt['SCM_style_title'] = 'Estilo &amp; opciones de color';
 $txt['SCM_custom_style'] = 'Enlace personalizado:';
+
+$txt['SCM_playlists'] = 'Listas de reproducci&oacute;n';
+//$txt['SCM_playlists_active'] = 'Active';
+//$txt['SCM_playlists_name'] = 'Name of Playlist';
+//$txt['SCM_playlists_Default'] = 'Default playlist';
+//$txt['SCM_new_playlist'] = 'Create New Playlist';
+//$txt['SCMP_playlist_which'] = 'Playlist %d';
+//$txt['SCMP_remove'] = 'remove';
+
+//$txt['SCM_playlist_nonexistant'] = 'The specified playlist does not exist!';
+//$txt['SCM_cannot_remove_default'] = 'Cannot remove the default playlist!';
 
 ?>

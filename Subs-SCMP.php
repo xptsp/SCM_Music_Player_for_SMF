@@ -31,7 +31,7 @@ function SCM_Load()
 		$disabled |= (!empty($modSettings['SCM_hide_admin']) && $action == 'admin');
 		$disabled |= (!empty($modSettings['SCM_hide_calendar']) && $action == 'calendar');
 		$disabled |= (!empty($modSettings['SCM_hide_moderate']) && $action == 'moderate');
-	}	
+	}
 	if ($disabled)
 		$_SESSION['SCM_last_update'] = $enabled = false;
 
@@ -101,7 +101,7 @@ function SCM_Load()
 	$context['html_headers'] .= '
 	<script type="text/javascript">' . (!$enabled ? '
 		SCM.stop();' : '') . ($enabled ? '
-		SCM.placement("' . $placement . '");' . 
+		SCM.placement("' . $placement . '");' .
 		($include_playlist ? 'SCM.loadPlaylist([' . $playlist . ']);' : '') : '') . '
 	</script>
 	<!-- SCM Music Player script end -->';

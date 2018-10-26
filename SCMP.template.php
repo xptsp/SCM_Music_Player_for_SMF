@@ -9,6 +9,68 @@
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
+function template_SCMP_playlist()
+{
+	global $context, $txt, $modSettings, $boardurl, $forum_version, $scripturl;
+
+	// Flag that will be used to add SMF 2.1 elements to the template:
+	$smf21 = (substr($forum_version, 0, 7) == 'SMF 2.1');
+
+	// Let's get this template started:
+	echo '
+	<div id="manage_boards">
+		<form action="', $context['post_url'], ';save" method="post" accept-charset="', $context['character_set'], '">
+			<div class="cat_bar">
+				<h3 class="catbg">', $txt['SCM_playlist_title'], '</h3>
+			</div>
+			<div class="windowbg">
+				<span class="topslice"><span></span></span>';
+	if ($smf21)
+		echo '
+				<div class="sub_bar">
+					<h3 class="subbg">
+						', $txt['subforums_list'], '
+					</h3>
+				</div>';
+	echo '
+				<div class="content">
+					<ul style="float:left; width:100%;">';
+
+	// List through every subforum, printing its name and link to modify the subforum, 
+	$alternate = false;
+	$count = count($context['SCMP_playlists']);
+	foreach ($context['SCMP_playlists'] as $id => $playlist)
+	{
+		$alternate = !$alternate;
+		echo '
+						<li class="windowbg', $alternate ? '' : '2', '" style="padding-', ($context['right_to_left'] ? 'right' : 'left'), ': 5px;">
+							<span class="floatleft">' . ($count > 1 ? '<input type="radio" name="SCM_selected_playlist" value="' . $id . '"' . ($modSettings['SCM_selected_playlist'] == $id ? ' checked="checked"' : '') . ' />' : ''), $playlist['name'], '</span>
+							<span class="floatright">';
+		if ($id != 0)
+			echo '
+								<span class="modify_boards"><a href="', $scripturl, '?action=admin;area=scm_media_player;sa=playlists;remove=', $id, '"', ($smf21 ? ' class="button"' : ''), '>', $txt['SCMP_remove'], '</a></span>';
+		echo '
+								<span class="modify_boards"><a href="', $scripturl, '?action=admin;area=scm_media_player;sa=playlists;edit=', $id, '"', ($smf21 ? ' class="button"' : ''), '>', $txt['mboards_modify'], '</a></span>
+							</span>
+							<br style="clear: right;" />
+						</li>';
+	}
+
+	// Let's finish this template:
+	echo '
+					</ul>
+					<div class="righttext">', ($count > 1 ? '
+						<input type="submit" name="new_selection" value="' . $txt['save'] . '" class="button_submit" />' : ''), '
+						<input type="submit" name="new_playlist" value="', $txt['SCM_new_playlist'], '" class="button_submit" />
+						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+					</div>
+				</div>
+				<span class="botslice"><span></span></span>
+			</div>
+		</form>
+	</div>';
+}
+
 function template_callback_SCM_playlists()
 {
 	global $context, $txt, $modSettings, $boardurl;
@@ -22,24 +84,17 @@ function template_callback_SCM_playlists()
 							<strong><u>', $txt['SCM_music_URL'], '</u></strong>
 						</dd>';
 	$counter = 0;
-	if (!empty($modSettings['SCM_playlist']))
+	foreach ($context['SCMP_songlist']['songs'] as $title => $url)
 	{
-		$playlist = safe_unserialize($modSettings['SCM_playlist']);
-		if (count($playlist))
-		{
-			foreach ($playlist as $title => $url)
-			{
-				$counter++;
-				echo '
-						<dt id="title_', $counter, '">
-							<input type="text" name="SCM_title[]" value=', JavaScriptEscape($title), ' size="25" class="input_text" />
-						</dt>
-						<dd id="url_', $counter, '">
-							<input type="text" name="SCM_url[]" value=', JavaScriptEscape($url), ' size="40" class="input_text" />
-							<a href="javascript:void(0);" onclick="removeTrack(', $counter .'); return false;"><img src="', $boardurl, '/Themes/default/images/icons/quick_remove.gif"></a>
-						</dd>';
-			}
-		}
+		$counter++;
+		echo '
+				<dt id="title_', $counter, '">
+					', $counter, ') <input type="text" name="SCM_title[]" value=', JavaScriptEscape($title), ' size="25" class="input_text" />
+				</dt>
+				<dd id="url_', $counter, '">
+					<input type="text" name="SCM_url[]" value=', JavaScriptEscape($url), ' size="40" class="input_text" />
+					<a href="javascript:void(0);" onclick="removeTrack(', $counter .'); return false;"><img src="', $boardurl, '/Themes/default/images/icons/quick_remove.gif"></a>
+				</dd>';
 	}
 
 	// Add the button and Javascript to add a track to the playlist:
@@ -48,7 +103,7 @@ function template_callback_SCM_playlists()
 							var counter = ', ++$counter, ';
 							function addTrack()
 							{
-								setOuterHTML(document.getElementById("insert_playlist"), \'<dt id="title_\' + counter + \'"><input type="text" name="SCM_title[]" size="25" class="input_text" /></dt><dd id="url_\' + counter + \'"><input type="text" name="SCM_url[]" size="40" class="input_text" /> <a href="javascript:void(0);" onclick="removeTrack(\' + counter + \'); return false;"><img src="' . $boardurl . '/Themes/default/images/icons/quick_remove.gif"></a></dd><div id="insert_playlist"></div>\');
+								setOuterHTML(document.getElementById("insert_playlist"), \'<dt id="title_\' + counter + \'">\' + counter + \') <input type="text" name="SCM_title[]" size="25" class="input_text" /></dt><dd id="url_\' + counter + \'"><input type="text" name="SCM_url[]" size="40" class="input_text" /> <a href="javascript:void(0);" onclick="removeTrack(\' + counter + \'); return false;"><img src="' . $boardurl . '/Themes/default/images/icons/quick_remove.gif"></a></dd><div id="insert_playlist"></div>\');
 								counter++;
 							}
 							function removeTrack(track)

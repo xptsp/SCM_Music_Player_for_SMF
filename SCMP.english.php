@@ -33,7 +33,7 @@ $txt['SCM_show_playlist'] = 'Show playlist by default?';
 $txt['SCM_hide_boardindex'] = 'Hide Blocks in Forum Areas';
 $txt['SCM_boardindex'] = 'Board Index';
 
-$txt['SCM_playlist'] = 'Playlists';
+$txt['SCM_playlist'] = 'Playlist';
 $txt['SCM_playlist_title'] = 'List of Tracks';
 $txt['SCM_music_title'] = 'Song Title';
 $txt['SCM_music_URL'] = 'Song URL';
@@ -42,5 +42,16 @@ $txt['SCM_add_track'] = 'Add Track';
 $txt['SCM_skins'] = 'Skins';
 $txt['SCM_style_title'] = 'Style &amp; Color Options';
 $txt['SCM_custom_style'] = 'Custom URL:';
+
+$txt['SCM_playlists'] = 'Playlists';
+$txt['SCM_playlists_active'] = 'Active';
+$txt['SCM_playlists_name'] = 'Name of Playlist';
+$txt['SCM_playlists_Default'] = 'Default playlist';
+$txt['SCM_new_playlist'] = 'Create New Playlist';
+$txt['SCMP_playlist_which'] = 'Playlist %d';
+$txt['SCMP_remove'] = 'remove';
+
+$txt['SCM_playlist_nonexistant'] = 'The specified playlist does not exist!';
+$txt['SCM_cannot_remove_default'] = 'Cannot remove the default playlist!';
 
 ?>

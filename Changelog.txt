@@ -1,3 +1,8 @@
+v1.7 - August 18th, 2017
+o Fixed issue where enabling the player apparently didn't take.
+o Added source files to SCM Music Player to mod.
+o Mod now pulls SCM Music Player from the forum folder.
+
 v1.6 - August 10th, 2017
 o Fixed a lot of decision-making code to make the SCM player work properly.
 

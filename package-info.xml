@@ -4,7 +4,7 @@
 	<id>dougiefresh:PMIH</id>
 	<name>SCM Player for SMF</name>
 	<type>modification</type>
-	<version>1.6</version>
+	<version>1.7</version>
 
 	<install for="2.0 - 2.0.99, 2.1 Beta 2">
 		<readme type="file" parsebbc="true">readme.txt</readme>
@@ -14,6 +14,7 @@
 		<require-file name="SCMP.english.php" destination="$languagedir" />
 		<require-file name="hide_player.css" destination="$themedir/css" />
 		<require-file name="SCMP.template.php" destination="$boarddir/Themes/default/" />
+		<require-dir name="SCM_Music_Player" destination="$boarddir" />
 		<redirect timeout="5000" url="?action=admin;area=scm_media_player" />
 	</install>
 	<uninstall for="2.0 - 2.0.99, 2.1 Beta 2">
@@ -23,5 +24,6 @@
 		<remove-file name="$languagedir/SCMP.english.php" />
 		<remove-file name="$themedir/css/hide_player.css" />
 		<remove-file name="$boarddir/Themes/default/SCMP.template.php" />
+		<remove-dir name="$boarddir/SCM_Music_Player" />
 	</uninstall>
 </package-info>

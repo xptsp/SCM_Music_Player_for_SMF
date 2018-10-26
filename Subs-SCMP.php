@@ -19,6 +19,7 @@ function SCM_Load()
 	// Disable the player if we are not allowed to listen to Site Music:
 	$disabled = !allowedTo('listen_to_music');
 	$action = isset($_GET['action']) && $_GET['action'] != 'forum' ? $_GET['action'] : false;
+	$enabled = $modSettings['SCM_enabled'];
 	if (!$disabled)
 	{
 		$disabled |= (!empty($modSettings['SCM_hide_boardindex']) && empty($action) && empty($board) && empty($topic));
@@ -32,14 +33,14 @@ function SCM_Load()
 		$disabled |= (!empty($modSettings['SCM_hide_moderate']) && $action == 'moderate');
 	}	
 	if ($disabled)
-		$_SESSION['SCM_last_update'] = $modSettings['SCM_enabled'] = false;
+		$_SESSION['SCM_last_update'] = $enabled = false;
 
 	// Figure out which playlist we are going to play:
 	$selected = !empty($modSettings['SCM_selected_playlist']) ? '_' . $modSettings['SCM_selected_playlist'] : '';
 	$playlist = !empty($modSettings['SCM_playlist' . $selected]) ? $modSettings['SCM_playlist' . $selected] : (!empty($modSettings['SCM_playlist']) ? $modSettings['SCM_playlist'] : false);
 	if (empty($playlist))
-		$modSettings['SCM_enabled'] = false;
-	$enabled = !empty($modSettings['SCM_enabled']);
+		$enabled = false;
+	$enabled = !empty($enabled);
 
 	// If mod is disabled, then abort if current user has been updated yet:
 	if (!$enabled && !empty($_SESSION['SCM_last_update']) && !empty($modSettings['SCM_last_update']) && $_SESSION['SCM_last_update'] > $modSettings['SCM_last_update'])
@@ -75,7 +76,7 @@ function SCM_Load()
 	// Insert the player into the HTML header:
 	$context['html_headers'] .= '
 	<!-- SCM Music Player http://scmplayer.net -->
-	<script type="text/javascript" src="http://scmplayer.net/script.js" data-config="{
+	<script type="text/javascript" src="' . $boardurl . '/SCM_Music_Player/script.js" data-config="{
 		\'skin\': \'' . $css . '\',
 		\'volume\': ' . ((int) (!isset($modSettings['SCM_volume']) ? 50 : $modSettings['SCM_volume'])) . ',
 		\'autoplay\': ' . ($autoplay ? 'true' : 'false'). ',

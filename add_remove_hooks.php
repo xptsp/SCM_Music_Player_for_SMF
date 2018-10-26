@@ -24,6 +24,7 @@ $hook_functions = array(
 	'integrate_load_theme' => 'SCM_Load',
 	'integrate_modify_modifications' => 'SCM_Area',
 	'integrate_admin_areas' => 'SCM_Admin',
+	'integrate_load_permissions' => 'SCM_Permissions',
 );
 
 // Adding or removing them?

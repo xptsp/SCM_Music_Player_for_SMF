@@ -14,7 +14,12 @@ if (!defined('SMF'))
 /*******************************************************************************/
 function SCM_Load()
 {
-	global $context, $modSettings, $txt, $boardurl;
+	global $context, $modSettings, $txt, $boardurl, $user_info;
+
+	// Disable the player if we are not allowed to listen to Site Music:
+	if (!allowedTo('listen_to_music'))
+		$modSettings['SCM_enabled'] =  false;
+	$_SESSION['SCM_last_update'] = time();
 
 	// If mod is disabled, then abort if current user has been updated yet:
 	if (empty($modSettings['SCM_enabled']) || empty($modSettings['SCM_playlist']))
@@ -65,9 +70,6 @@ function SCM_Load()
 	$context['html_headers'] .= '
 	</script>
 	<!-- SCM Music Player script end -->';
-
-	// Record the current time so that we know if the admin have changed the options since....
-	$_SESSION['SCM_last_update'] = time();
 }
 
 function SCM_Admin(&$areas)
@@ -82,6 +84,11 @@ function SCM_Area(&$areas)
 	$areas['scm_music_player'] = 'SCM_Modify';
 }
 
+function SCM_Permissions(&$permissionGroups, &$permissionList, &$leftPermissionGroups, &$hiddenPermissions, &$relabelPermissions)
+{
+	$permissionList['membergroup']['listen_to_music'] = array(false, 'general', 'view_basic_info');
+}
+
 /*******************************************************************************/
 // Functions required for mod configuration:
 /*******************************************************************************/
@@ -91,6 +98,8 @@ function SCM_Modify($return_config = false)
 
 	$config_vars = array(
 		array('check', 'SCM_enabled'),
+		array('permissions', 'listen_to_music'),
+		'',
 		array('int', 'SCM_volume'),
 		array('check', 'SCM_autoplay'),
 		array('check', 'SCM_shuffle'),

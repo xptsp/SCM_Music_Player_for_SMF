@@ -28,5 +28,7 @@ $txt['SCM_music_URL'] = 'Song URL';
 $txt['SCM_add_track'] = 'Add Track';
 $txt['SCM_style_title'] = 'Style &amp; Color Options';
 $txt['SCM_custom_style'] = 'Custom URL:';
+$txt['listen_to_music'] = 'Membergroups can listen to Site Music:';
+$txt['permissionname_listen_to_music'] = 'Can Listen to Site Music';
 
 ?>

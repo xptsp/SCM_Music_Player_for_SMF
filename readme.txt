@@ -1,5 +1,5 @@
 [hr]
-[center][color=red][size=16pt][b]SCM MUSIC PLAYER FOR SMF v1.0.2[/b][/size][/color]
+[center][color=red][size=16pt][b]SCM MUSIC PLAYER FOR SMF v1.1[/b][/size][/color]
 [url=http://www.simplemachines.org/community/index.php?action=profile;u=253913][b]By Dougiefresh[/b][/url] -> [url=http://custom.simplemachines.org/mods/index.php?mod=4132]Link to Mod[/url]
 [/center]
 [hr]
@@ -17,6 +17,9 @@ Under [b]Admin[/b] => [b]Configuration[/b] => [b]Modification Settings[/b], ther
 > [b]Placement of Player Bar[/b]
 > [b]Show playlist by default? [/b]
 > SMC media player skin selection.
+
+There is also a new permission under [b]Admin[/b] => [b]Forum[/b] => [b]Permissions[/b]:
+o [b]Listen to Site Music[/b]
 
 [color=blue][b][size=12pt][u]Compatibility Notes[/u][/size][/b][/color]
 This mod was tested on SMF 2.0.12, but should work on any version of SMF 2.0.x.  SMF 1.x and SMF 2.1 is not and will not be supported.

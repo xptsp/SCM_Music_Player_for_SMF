@@ -1,3 +1,6 @@
+v1.4 - July 5th, 2017
+o Fixed the hook that adds new section to the admin panel, which caused issues in Core Features.
+
 v1.3 - March 27th, 2017
 o Added check to see if function safe_serialize exists before use.
 

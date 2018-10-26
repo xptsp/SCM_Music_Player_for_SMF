@@ -15,15 +15,16 @@ if (!defined('SMF'))
 function SCM_Admin(&$areas)
 {
 	global $txt;
+	return;
 	loadLanguage('SCMP');
 	$areas['config']['areas']['scm_media_player'] = array(
 		'label' => $txt['SCM_area'],
 		'function' => 'SCM_Modify',
 		'icon' => 'modifications.gif',
 		'subsections' => array(
-			'settings' => array($txt['language_settings'], 'admin_forum'),
-			'skins' => array($txt['SCM_skins'], 'admin_forum'),
-			'playlists' => array($txt['SCM_playlist'], 'admin_forum'),
+			'settings' => array($txt['language_settings']),
+			'skins' => array($txt['SCM_skins']),
+			'playlists' => array($txt['SCM_playlist']),
 		),
 	);		
 }

@@ -96,7 +96,7 @@ function SCM_Load()
 	$echo = array();
 	foreach ($context['SCMP_playlists'][$selected]['songs'] as $title => $url)
 		$echo[$title] = '{\'title\':' . JavaScriptEscape($title) . ',\'url\':' . JavaScriptEscape($url) . '}';
-	$playlist = implode($echo, ',');
+	$playlist = implode(',', $echo);
 
 	// Decide on the CSS for the player:
 	if (!$enabled || empty($playlist))
